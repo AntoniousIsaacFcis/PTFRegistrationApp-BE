@@ -4,11 +4,11 @@ namespace PTFRegistrationApp_BE.Services;
 
 public sealed class ProxyResponse
 {
-    public required HttpStatusCode StatusCode { get; init; }
+    public HttpStatusCode StatusCode { get; init; }
 
-    public required string Body { get; init; }
+    public string Body { get; init; } = string.Empty;
 
-    public required string CorrelationId { get; init; }
+    public string CorrelationId { get; init; } = string.Empty;
 
     public string ContentType { get; init; } = "application/json; charset=utf-8";
 }

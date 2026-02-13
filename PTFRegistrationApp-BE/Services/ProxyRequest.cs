@@ -2,9 +2,9 @@ namespace PTFRegistrationApp_BE.Services;
 
 public sealed class ProxyRequest
 {
-    public required string Method { get; init; }
+    public string Method { get; init; } = string.Empty;
 
-    public required string RelativePathWithQuery { get; init; }
+    public string RelativePathWithQuery { get; init; } = string.Empty;
 
     public string? Body { get; init; }
 
@@ -12,5 +12,5 @@ public sealed class ProxyRequest
 
     public string? ContentType { get; init; }
 
-    public required string CorrelationId { get; init; }
+    public string CorrelationId { get; init; } = string.Empty;
 }
