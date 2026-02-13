@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "CHM_BASE_URL": "https://api.chmeetings.com",
+    "CHM_SERVICE_ID": "33CE95026156648A",
+    "ALLOWED_ORIGINS": "http://localhost:4200,https://your-swa-domain.azurestaticapps.net",
+    "CHM_TIMEOUT_SECONDS": "30",
+    "CHM_RETRY_COUNT": "2"
+  }
+}
