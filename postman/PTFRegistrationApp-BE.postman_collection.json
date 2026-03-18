@@ -1,0 +1,64 @@
+{
+  "info": {
+    "name": "PTFRegistrationApp-BE",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Signin",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"UserName\": \"user\",\n  \"Password\": \"pass\",\n  \"Code\": \"\",\n  \"RememberMe\": true,\n  \"ReturnUrl\": \"/Core/Event\",\n  \"ServiceId\": \"33CE95026156648A\"\n}"
+        },
+        "url": "{{baseUrl}}/Account/Signin"
+      }
+    },
+    {
+      "name": "List Event Schedules",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": "{{baseUrl}}/33CE95026156648A/Meetings/Event/ListEventSchedules?eventId=1120861&StartDate=2026-03-01&EndDate=2026-05-31&SearchText="
+      }
+    },
+    {
+      "name": "Add Or Remove Attendance",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[{\n  \"MemberId\": 1,\n  \"IsCheckIn\": true,\n  \"ScheduleId\": 2189814,\n  \"FormUserEntryDto\": null,\n  \"SubmissionId\": null\n}]"
+        },
+        "url": "{{baseUrl}}/33CE95026156648A/Meetings/Schedule/AddOrRemoveAttendance"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:7071"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
