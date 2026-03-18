@@ -17,6 +17,7 @@ Production-ready Azure Functions backend that provides **allowlisted same-origin
 - `POST /Account/Signin`
 - `GET /33CE95026156648A/Meetings/Event/ListEvents`
 - `GET /33CE95026156648A/Meetings/Event/EventDetails`
+- `GET /33CE95026156648A/Meetings/Event/ListEventSchedules`
 - `POST /33CE95026156648A/Meetings/Schedule/AddOrRemoveAttendance`
 - `POST /33CE95026156648A/Core/Member/ListMembers`
 - `GET /33CE95026156648A/Meetings/Schedule/ListMemberSchedules`
@@ -68,6 +69,9 @@ curl -i "http://localhost:7071/33CE95026156648A/Meetings/Event/ListEvents?StartD
 curl -i "http://localhost:7071/33CE95026156648A/Meetings/Event/EventDetails?eventId=123" \
   -H "Authorization: Bearer <token>"
 
+curl -i "http://localhost:7071/33CE95026156648A/Meetings/Event/ListEventSchedules?eventId=1120861&StartDate=2026-03-01&EndDate=2026-05-31&SearchText=" \
+  -H "Authorization: Bearer <token>"
+
 curl -i -X POST http://localhost:7071/33CE95026156648A/Meetings/Schedule/AddOrRemoveAttendance \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
@@ -86,6 +90,8 @@ curl -i "http://localhost:7071/33CE95026156648A/Core/Member/GetMemberMeetingsInf
 
 curl -i http://localhost:7071/api/health
 ```
+
+Use `ListEventSchedules` to resolve the correct non-zero `ScheduleId` for the selected event date before calling `AddOrRemoveAttendance`.
 
 ## Postman collection
 

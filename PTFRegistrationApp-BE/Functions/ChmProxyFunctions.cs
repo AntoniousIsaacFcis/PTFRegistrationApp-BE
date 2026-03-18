@@ -78,6 +78,14 @@ public class ChmProxyFunctions
         CancellationToken ct)
         => HandleAsync(req, log, ct, "GET", $"{serviceId}/Meetings/Event/EventDetails{req.QueryString}", ValidateEventDetailsQuery, true, serviceId);
 
+    [FunctionName("ListEventSchedules")]
+    public Task<IActionResult> ListEventSchedules(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "options", Route = "{serviceId}/Meetings/Event/ListEventSchedules")] HttpRequest req,
+        string serviceId,
+        ILogger log,
+        CancellationToken ct)
+        => HandleAsync(req, log, ct, "GET", $"{serviceId}/Meetings/Event/ListEventSchedules{req.QueryString}", ValidateEventSchedulesQuery, true, serviceId);
+
     [FunctionName("AddOrRemoveAttendance")]
     public Task<IActionResult> AddOrRemoveAttendance(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", "options", Route = "{serviceId}/Meetings/Schedule/AddOrRemoveAttendance")] HttpRequest req,
@@ -195,6 +203,18 @@ public class ChmProxyFunctions
         return Task.FromResult(string.IsNullOrWhiteSpace(req.Query["eventId"]) ? "eventId is required." : null);
     }
 
+    private static Task<string?> ValidateEventSchedulesQuery(HttpRequest req)
+    {
+        if (string.IsNullOrWhiteSpace(req.Query["eventId"]) ||
+            string.IsNullOrWhiteSpace(req.Query["StartDate"]) ||
+            string.IsNullOrWhiteSpace(req.Query["EndDate"]))
+        {
+            return Task.FromResult<string?>("eventId, StartDate, and EndDate are required.");
+        }
+
+        return Task.FromResult<string?>(null);
+    }
+
     private static Task<string?> ValidateMemberRangeQuery(HttpRequest req)
     {
         if (string.IsNullOrWhiteSpace(req.Query["MemberId"]) || string.IsNullOrWhiteSpace(req.Query["From"]))
@@ -255,6 +275,11 @@ public class ChmProxyFunctions
             {
                 return "Each attendance item must include MemberId, IsCheckIn, and ScheduleId.";
             }
+
+            if (jsonArray.Any(item => !IsPositiveInteger(item["ScheduleId"])))
+            {
+                return "Each attendance item must include a positive ScheduleId. Use ListEventSchedules to resolve the correct ScheduleId for the selected event date.";
+            }
         }
         catch
         {
@@ -308,6 +333,21 @@ public class ChmProxyFunctions
 
         req.HttpContext.Items[cacheKey] = body;
         return body;
+    }
+
+    private static bool IsPositiveInteger(JToken? token)
+    {
+        if (token == null)
+        {
+            return false;
+        }
+
+        return token.Type switch
+        {
+            JTokenType.Integer => token.Value<long>() > 0,
+            JTokenType.String => long.TryParse(token.Value<string>(), out var value) && value > 0,
+            _ => false
+        };
     }
 
     private string EnsureCorrelationId(HttpRequest req)

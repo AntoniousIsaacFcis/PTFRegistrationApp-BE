@@ -43,6 +43,18 @@ public class ChmProxyFunctionsTests
     }
 
     [Fact]
+    public async Task ListEventSchedules_ShouldRejectMissingQuery()
+    {
+        var sut = CreateSut();
+        var req = BuildRequest("GET", "/33CE95026156648A/Meetings/Event/ListEventSchedules?eventId=1120861", null);
+
+        var result = await sut.ListEventSchedules(req, "33CE95026156648A", NullLogger.Instance, CancellationToken.None);
+
+        var content = result.Should().BeOfType<ContentResult>().Subject;
+        content.StatusCode.Should().Be(400);
+    }
+
+    [Fact]
     public async Task ListEvents_ShouldForward_WhenValid()
     {
         var proxy = new FakeProxyService();
@@ -57,6 +69,40 @@ public class ChmProxyFunctionsTests
         var content = result.Should().BeOfType<ContentResult>().Subject;
         content.StatusCode.Should().Be((int)HttpStatusCode.OK);
         JObject.Parse(content.Content!).Value<string>("Message").Should().Be("ok");
+    }
+
+    [Fact]
+    public async Task ListEventSchedules_ShouldForward_WhenValid()
+    {
+        var proxy = new FakeProxyService();
+        var sut = CreateSut(proxy);
+        var req = BuildRequest("GET", "/33CE95026156648A/Meetings/Event/ListEventSchedules?eventId=1120861&StartDate=2026-03-01&EndDate=2026-05-31&SearchText=", null);
+        req.Headers["Authorization"] = "Bearer token";
+
+        var result = await sut.ListEventSchedules(req, "33CE95026156648A", NullLogger.Instance, CancellationToken.None);
+
+        proxy.LastRequest.Should().NotBeNull();
+        proxy.LastRequest!.RelativePathWithQuery.Should().Contain("ListEventSchedules");
+        proxy.LastRequest.RelativePathWithQuery.Should().Contain("eventId=1120861");
+        proxy.LastRequest.RelativePathWithQuery.Should().Contain("StartDate=2026-03-01");
+        var content = result.Should().BeOfType<ContentResult>().Subject;
+        content.StatusCode.Should().Be((int)HttpStatusCode.OK);
+        JObject.Parse(content.Content!).Value<string>("Message").Should().Be("ok");
+    }
+
+    [Fact]
+    public async Task AddOrRemoveAttendance_ShouldRejectNonPositiveScheduleId()
+    {
+        var sut = CreateSut();
+        var req = BuildRequest("POST", "/33CE95026156648A/Meetings/Schedule/AddOrRemoveAttendance", "[{\"MemberId\":1,\"IsCheckIn\":true,\"ScheduleId\":0}]");
+        req.Headers["Authorization"] = "Bearer token";
+
+        var result = await sut.AddOrRemoveAttendance(req, "33CE95026156648A", NullLogger.Instance, CancellationToken.None);
+
+        var content = result.Should().BeOfType<ContentResult>().Subject;
+        content.StatusCode.Should().Be(400);
+        content.Content.Should().Contain("positive ScheduleId");
+        content.Content.Should().Contain("ListEventSchedules");
     }
 
     private static ChmProxyFunctions CreateSut(FakeProxyService? proxy = null)

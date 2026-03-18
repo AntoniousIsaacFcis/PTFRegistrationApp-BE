@@ -22,12 +22,24 @@
         },
         "url": "{{baseUrl}}/Account/Signin"
       }
+    },
+    {
+      "name": "ListEventSchedules",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/33CE95026156648A/Meetings/Event/ListEventSchedules?eventId=1120861&StartDate=2026-03-01&EndDate=2026-05-31&SearchText="
+      }
     }
   ],
   "variable": [
     {
       "key": "baseUrl",
       "value": "http://localhost:7071"
+    },
+    {
+      "key": "token",
+      "value": ""
     }
   ]
 }
